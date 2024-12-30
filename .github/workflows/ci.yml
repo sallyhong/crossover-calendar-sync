@@ -45,4 +45,25 @@ jobs:
         run: poetry install
         
       - name: Check commit messages
-        run: poetry run cz check --rev-range HEAD~1..HEAD 
+        run: poetry run cz check --rev-range HEAD~1..HEAD
+
+  check-pr-title:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        
+      - name: Install dependencies
+        run: poetry install
+        
+      - name: Check PR title
+        run: |
+          echo "${{ github.event.pull_request.title }}" | poetry run cz check --message-from-stdin 
