@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        
+      - name: Install dependencies
+        run: poetry install
+        
+      - name: Run Ruff
+        run: poetry run ruff check .
+
+  check-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        
+      - name: Install dependencies
+        run: poetry install
+        
+      - name: Check commit messages
+        run: poetry run cz check --rev-range HEAD~1..HEAD 
